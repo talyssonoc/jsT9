@@ -5,8 +5,8 @@
 	<title>Teste trie</title>
 
 	<style>
-		#entrada,
-		#saida {
+		#in,
+		#out {
 			width: 400px;
 			height: 400px;
 			border: 1px solid black;
@@ -14,12 +14,12 @@
 			padding: 5px;
 		}
 
-		#entrada {
+		#in {
 			height: auto;
 			text-align: center;
 		}
 
-		#entrada input {
+		#in input {
 			width: 100%;
 		}
 
@@ -28,10 +28,9 @@
 	<script type="text/javascript" src="js/t9.js"></script>
 
 	<script>
-		// var arvore = new T9(['A', 'Ar', 'Ta', 'Tal']);
 
 
-		var arvore = new T9(['Lorem', 
+		var tree = new T9(['Lorem', 
 							'ipsum', 
 							'dolor', 
 							'sit', 
@@ -104,23 +103,23 @@
 
 		window.onload = function() {
 
-				var saida = document.getElementById('saida');
-				var entrada = document.getElementById('campoEntrada');
+				var out = document.getElementById('out');
+				var field = document.getElementById('inField');
 
-				entrada.onkeyup = function() {
+				field.onkeyup = function() {
 
-					if(entrada.value !== '') {
-						var previsoes = arvore.predict(entrada.value);
+					if(field.value !== '') {
+						var predictions = tree.predict(field.value);
 
-						if(previsoes.length > 0) {
-							saida.innerHTML = previsoes.join('<br/>');
+						if(predictions.length > 0) {
+							out.innerHTML = predictions.join('<br/>');
 						}
 						else {
-							saida.innerHTML = '';
+							out.innerHTML = '';
 						}
 					}
 					else {
-						saida.innerHTML = '';
+						out.innerHTML = '';
 					}
 
 				};
@@ -130,11 +129,11 @@
 	</head>
 <body>
 
-	<div id="entrada">
-		<input type="text" id="campoEntrada"/>
+	<div id="in">
+		<input type="text" id="inField"/>
 	</div>
 
-	<div id="saida">
+	<div id="out">
 
 	</div>
 

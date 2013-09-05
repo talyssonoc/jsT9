@@ -62,7 +62,7 @@ var T9 = function(_wordList_) {
 				auxBranch = auxBranch.branches[ch]; //Goes to the next branch
 			}
 			else {
-				// console.log('Impossível prever');
+				// console.log('No matches');
 				return [];
 			}
 		}

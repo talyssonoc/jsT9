@@ -69,7 +69,8 @@ var T9 = function(_wordList_) {
 
 		var predictedList = exploreBranch(word, auxBranch);
 
-		//TODO order the list
+		//Sort the list using the "sortFuncion" method to select what comes first
+		predictedList.sort(sortFunction);
 
 		return predictedList;
 
@@ -102,6 +103,23 @@ var T9 = function(_wordList_) {
 		return predictedList;
 
 	};
+
+	/**
+	 * Function used to sort the predicted words
+	 * @param  {String} wordA First word of the comparison
+	 * @param  {String} wordB Second word of the comparison
+	 * @return {Number}       If wordA comes first or after wordB
+	 */
+	var sortFunction = function(wordA, wordB) {
+		if(wordA.length <= wordB.length)
+			return -1;
+		if(wordA.length > wordB.length)
+			return 1;
+		if(wordA <= wordB)
+			return -1;
+		else
+			return 1;
+	}
 
 	//Calls the constructor
 	init();

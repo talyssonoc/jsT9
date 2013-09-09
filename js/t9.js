@@ -1,3 +1,9 @@
+/**
+ * Options:
+ * 		Sort function
+ * 		Max values in the return
+ */
+
 var T9 = function(_wordList_) {
 
 	//The root of the trie tree
@@ -8,41 +14,7 @@ var T9 = function(_wordList_) {
 
 	var wordList = _wordList_;
 
-	/**
-	 *	Starts the trie tree with the list of words
-	 * 
-	 * @constructor
-	 */
-	var init = function() {
-		var auxBranch,
-		subAuxBranch;
-
-		// For each word in the list
-		for(var _word_ in wordList) {
-			auxBranch = root; //Get the current state of the tree
-
-			var word = wordList[_word_]; //Get the current word to be added to the three
-
-			//For each character of the current word
-			for(var _ch_ in word) {
-				var ch = word[_ch_]; //Get the current character of the word
-
-				//If the branch don't have the word yet
-				if(typeof auxBranch.branches[ch] === 'undefined') {
-					auxBranch.branches[ch] = { //Adds a new leaf to the tree
-						$ : false,
-						branches : []
-					};
-				}
-				auxBranch = auxBranch.branches[ch];
-
-			}
-
-			auxBranch.$ = true;
-
-		}
-
-	};
+	var _ = this;
 
 	/**
 	 * Predict the words, given the initial word
@@ -120,6 +92,50 @@ var T9 = function(_wordList_) {
 		else
 			return 1;
 	}
+
+
+	/**
+	 * Add a new word to the tree
+	 * @param {String} word Word to be added to the tree
+	 */
+	this.addNewWord = function(word) {
+		var auxBranch = root;
+
+		//For each character of the current word
+		for(var _ch_ in word) {
+			var ch = word[_ch_]; //Get the current character of the word
+
+			//If the branch doesn't have the word yet
+			if(typeof auxBranch.branches[ch] === 'undefined') {
+				auxBranch.branches[ch] = { //Adds a new leaf to the tree
+					$ : false,
+					branches : []
+				};
+			}
+			auxBranch = auxBranch.branches[ch];
+
+		}
+
+		auxBranch.$ = true;
+	};
+
+	/**
+	 *	Starts the trie tree with the list of words
+	 * 
+	 * @constructor
+	 */
+	var init = function() {
+		var auxBranch;
+
+		// For each word in the list
+		for(var _word_ in wordList) {
+
+			var word = wordList[_word_]; //Get the current word to be added to the three
+
+			_.addNewWord(word);
+		}
+
+	};
 
 	//Calls the constructor
 	init();

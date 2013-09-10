@@ -1,27 +1,43 @@
-/**
- * Options:
- * 		Sort function
- * 		Max values in the return
- */
+var T9 = function(_wordList, _config) {
+	var _ = this;
 
-var T9 = function(_wordList_) {
+	var wordList = _wordList;
 
-	//The root of the trie tree
+	var config = {
+		sort : function(wordA, wordB) {
+			if(wordA.length <= wordB.length)
+				return -1;
+			if(wordA.length > wordB.length)
+				return 1;
+			if(wordA <= wordB)
+				return -1;
+			else
+				return 1;
+		},
+		maxAmount : -1
+	};
+
+	// Extends the config options
+	(function(destination, source) {
+		for (var property in source) {
+			destination[property] = source[property];
+		}
+		return destination;
+	})(config, _config);
+
+	
+	//The root of the tree
 	var root = {
 		$ : false,
 		branches : []
 	};
-
-	var wordList = _wordList_;
-
-	var _ = this;
 
 	/**
 	 * Predict the words, given the initial word
 	 * @param  {String} word The initial word
 	 * @return {Array}      The array of Strings with the predicted words
 	 */
-	this.predict = function(word) {
+	this.predict = function(word, amount) {
 		var auxBranch = root;
 
 		//Goes through the tree until it finds the branch from
@@ -29,9 +45,9 @@ var T9 = function(_wordList_) {
 		for(var _ch_ in word) {
 			var ch = word[_ch_]; //Get the current character from the word
 
-			//If the leaf branch with the current character exists
+			//If the leaf branch with the current character exists, goes to the next branch
 			if(typeof auxBranch.branches[ch] !== 'undefined') {
-				auxBranch = auxBranch.branches[ch]; //Goes to the next branch
+				auxBranch = auxBranch.branches[ch];
 			}
 			else {
 				// console.log('No matches');
@@ -39,12 +55,24 @@ var T9 = function(_wordList_) {
 			}
 		}
 
-		var predictedList = exploreBranch(word, auxBranch);
+		var predictedList = _exploreBranch(word, auxBranch);
 
-		//Sort the list using the "sortFuncion" method to select what comes first
-		predictedList.sort(sortFunction);
+		predictedList.sort(config.sort);
 
-		return predictedList;
+		//If passes the amount as parameter, uses it
+		//Otherwise, check if the user changed the default
+		//max amount. If so, it uses the custom maxAmount,
+		//otherwise return all the results
+		if(typeof amount !== 'undefined') {
+			return predictedList.slice(0, amount);
+		}
+		else {
+			if(config.maxAmount > -1)
+				return predictedList.slice(0, config.maxAmount);
+			else
+				return predictedList;
+		}
+			
 
 	};
 
@@ -54,7 +82,7 @@ var T9 = function(_wordList_) {
 	 * @param  {Object} branch   The current branch
 	 * @return {Array}          List of predicted words
 	 */
-	var exploreBranch = function(baseWord, branch) {
+	var _exploreBranch = function(baseWord, branch) {
 		var predictedList = [];
 
 		var keys = Object.keys(branch.branches); //Get the branch names that forks from the branch
@@ -66,39 +94,19 @@ var T9 = function(_wordList_) {
 			}
 
 			//Recursively calls the function, passing the forking branches as parameter
-			var predictedWords = exploreBranch(baseWord + ch, branch.branches[ch]);
+			var predictedWords = _exploreBranch(baseWord + ch, branch.branches[ch]);
 
-			//Concatenates the predicted words to the list of predicted words
 			predictedList =  predictedList.concat(predictedWords);
 
 		}
 		return predictedList;
-
 	};
-
-	/**
-	 * Function used to sort the predicted words
-	 * @param  {String} wordA First word of the comparison
-	 * @param  {String} wordB Second word of the comparison
-	 * @return {Number}       If wordA comes first or after wordB
-	 */
-	var sortFunction = function(wordA, wordB) {
-		if(wordA.length <= wordB.length)
-			return -1;
-		if(wordA.length > wordB.length)
-			return 1;
-		if(wordA <= wordB)
-			return -1;
-		else
-			return 1;
-	}
-
 
 	/**
 	 * Add a new word to the tree
 	 * @param {String} word Word to be added to the tree
 	 */
-	this.addNewWord = function(word) {
+	this.addWord = function(word) {
 		var auxBranch = root;
 
 		//For each character of the current word
@@ -113,7 +121,6 @@ var T9 = function(_wordList_) {
 				};
 			}
 			auxBranch = auxBranch.branches[ch];
-
 		}
 
 		auxBranch.$ = true;
@@ -124,21 +131,19 @@ var T9 = function(_wordList_) {
 	 * 
 	 * @constructor
 	 */
-	var init = function() {
-		var auxBranch;
-
+	var _init = function() {
 		// For each word in the list
 		for(var _word_ in wordList) {
 
 			var word = wordList[_word_]; //Get the current word to be added to the three
 
-			_.addNewWord(word);
+			_.addWord(word);
 		}
 
 	};
 
 	//Calls the constructor
-	init();
+	_init();
 
 	return this;
 };

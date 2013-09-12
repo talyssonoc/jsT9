@@ -30,7 +30,7 @@ var T9 = function(_wordList, _config) {
 	//The root of the tree
 	var root = {
 		$ : false,
-		branches : []
+		branches : {}
 	};
 
 	/**
@@ -118,7 +118,7 @@ var T9 = function(_wordList, _config) {
 			if(typeof auxBranch.branches[ch] === 'undefined') {
 				auxBranch.branches[ch] = { //Adds a new leaf to the tree
 					$ : false,
-					branches : []
+					branches : {}
 				};
 			}
 			auxBranch = auxBranch.branches[ch];

@@ -14,7 +14,7 @@ var T9 = function(_wordList, _config) {
 			else
 				return 1;
 		},
-		maxAmount : -1,
+		maxAmount : Infinity,
 		caseSentitive : true
 	};
 
@@ -29,7 +29,6 @@ var T9 = function(_wordList, _config) {
 	
 	//The root of the tree
 	var root = {
-		$ : false,
 		branches : {}
 	};
 
@@ -38,8 +37,8 @@ var T9 = function(_wordList, _config) {
 	 * @param  {String} word The initial word
 	 * @return {Array}      The array of Strings with the predicted words
 	 */
-	this.predict = function(word, amount) {
-		var auxBranch = root;
+	 this.predict = function(word, amount) {
+	 	var auxBranch = root;
 
 		//Goes through the tree until it finds the branch from
 		//where it will begin to predict
@@ -51,7 +50,6 @@ var T9 = function(_wordList, _config) {
 				auxBranch = auxBranch.branches[ch];
 			}
 			else {
-				// console.log('No matches');
 				return [];
 			}
 		}
@@ -61,45 +59,74 @@ var T9 = function(_wordList, _config) {
 		predictedList.sort(config.sort);
 
 		//If passes the amount as parameter, uses it
-		//Otherwise, check if the user changed the default
-		//max amount. If so, it uses the custom maxAmount,
-		//otherwise return all the results
+		//Otherwise, uses the custom maxAmount.
 		if(typeof amount !== 'undefined') {
 			return predictedList.slice(0, amount);
 		}
 		else {
-			if(config.maxAmount > -1)
-				return predictedList.slice(0, config.maxAmount);
-			else
-				return predictedList;
+			return predictedList.slice(0, config.maxAmount);
 		}
-			
+
 
 	};
 
 	/**
-	 * Goes trough the branch looking for the words that contain the word passed as parameter
-	 * @param  {String} baseWord The base word of the current branch
-	 * @param  {Object} branch   The current branch
+	 * Executes a BFS looking for the words that contain the word passed as parameter
+	 * @param  {String} baseWord The base to look for
+	 * @param  {Object} branch   The begining branch
 	 * @return {Array}          List of predicted words
 	 */
-	var _exploreBranch = function(baseWord, branch) {
-		var predictedList = [];
+	 var _exploreBranch = function(baseWord, branch) {
+	 	var predictedList = [],
+	 	stack = [],
+	 	keys,
+	 	node =  {ch : '', word: baseWord, branch : branch};
 
-		var keys = Object.keys(branch.branches); //Get the branch names that forks from the branch
-		for(var _ch_ in keys) { //For each branch forking from the branch
-			var ch = keys[_ch_]; //Get the leading character of the current branch
-			
-			if(branch.branches[ch].$ === true) { //If the current leaf ends a word, puts the word on the list
-				predictedList.push(baseWord + ch);
+ 		stack.push(node);
+
+ 		while(stack.length != 0) {
+ 			node = stack.shift();
+
+			//If the current leaf ends a word, puts the word on the list
+			if(node.branch.$) {
+				predictedList.push(node.word + node.ch);
 			}
 
-			//Recursively calls the function, passing the forking branches as parameter
-			var predictedWords = _exploreBranch(baseWord + ch, branch.branches[ch]);
+			//Get the branch names that forks from the branch
+			keys = Object.keys(node.branch.branches);
 
-			predictedList =  predictedList.concat(predictedWords);
+			if(keys.length > 0) {
 
+				//Tests if the search can be stopped
+				if(predictedList.length < config.maxAmount/* && keys.length > 0*/) {
+
+					//Create a string object, so it will be the same reference in every children
+					var currentWord = new String(node.word + node.ch);
+
+					//Order the key array, so in the next iteration,
+					//if the maxAmount get reached, the search stops before
+					//the other branches be searched
+					keys.sort();
+
+					for(var _ch_ in keys) {
+						var ch = keys[_ch_];
+
+						var newNode = {
+							ch : ch,
+							word : currentWord,
+							branch : node.branch.branches[ch]
+						};
+
+						stack.push(newNode)
+					}
+
+				}
+				else {
+					return predictedList;
+				}
+			}
 		}
+
 		return predictedList;
 	};
 
@@ -107,8 +134,8 @@ var T9 = function(_wordList, _config) {
 	 * Add a new word to the tree
 	 * @param {String} word Word to be added to the tree
 	 */
-	this.addWord = function(word) {
-		var auxBranch = root;
+	 this.addWord = function(word) {
+	 	var auxBranch = root;
 
 		//For each character of the current word
 		for(var _ch_ in word) {
@@ -117,7 +144,6 @@ var T9 = function(_wordList, _config) {
 			//If the branch doesn't have the word yet
 			if(typeof auxBranch.branches[ch] === 'undefined') {
 				auxBranch.branches[ch] = { //Adds a new leaf to the tree
-					$ : false,
 					branches : {}
 				};
 			}
@@ -132,7 +158,7 @@ var T9 = function(_wordList, _config) {
 	 * 
 	 * @constructor
 	 */
-	var _init = function() {
+	 var _init = function() {
 		// For each word in the list
 		for(var _word_ in wordList) {
 

@@ -1,7 +1,7 @@
 jsT9
 ====
 
-A text-prediction JavaScript tool developed using trie
+A text-prediction JavaScript tool developed using PATRICIA tree
 
 Usage
 =====

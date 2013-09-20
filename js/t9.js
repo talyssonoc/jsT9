@@ -40,7 +40,8 @@ var T9 = function(_wordList, _config) {
 	 this.predict = function(word, amount) {
 	 	var currentBranch = root;
 	 	var finishedWord = false;
-	 	var baseWord = word;
+	 	// var baseWord = word;
+	 	var baseWord = '';
 
 		//Goes through the tree until it finds the branch from
 		//where it will begin to predict
@@ -51,8 +52,18 @@ var T9 = function(_wordList, _config) {
 				var subString = word.substring(0, word.length - i);
 
 				for(var branch in currentBranch.branches) {
-					if(currentBranch.branches[branch].prefix === subString) {
-						word = word.substring(word.length - i);
+					if(currentBranch.branches[branch].prefix.indexOf(subString) === 0) {
+						baseWord += currentBranch.branches[branch].prefix;
+
+						if(currentBranch.branches[branch].prefix === subString) {
+							word = word.substring(word.length - i);
+						}
+						//In cases where it begins with the substring, but doesn't end with it
+						//so it should just start the search from there
+						else { 
+							word = '';
+						}
+
 						currentBranch = currentBranch.branches[branch];
 						found = true;
 						break;
@@ -61,7 +72,7 @@ var T9 = function(_wordList, _config) {
 			}
 
 			if(!found) {
-				console.log('No matches');
+				// console.log('No matches');
 				return [];
 			}
 
@@ -71,7 +82,13 @@ var T9 = function(_wordList, _config) {
 
 		}
 
+		if(currentBranch.$ === true)
+			var currentWord = baseWord;
+
 		var predictedList = _exploreBranch(baseWord, currentBranch);
+
+		if(currentWord)
+			predictedList.push(currentWord);
 
 		predictedList.sort(config.sort);
 

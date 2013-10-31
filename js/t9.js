@@ -1,11 +1,11 @@
 var T9 = function(_wordList, _config) {
-	var _ = this;
+	var self = this;
 
 	var wordList = _wordList;
 
 	var config = {
 		sort : function(wordA, wordB) {
-			if(wordA.length <= wordB.length)
+			if(wordA.length < wordB.length)
 				return -1;
 			if(wordA.length > wordB.length)
 				return 1;
@@ -29,7 +29,7 @@ var T9 = function(_wordList, _config) {
 	
 	//The root of the tree
 	var root = {
-		branches : {}
+		branches : []
 	};
 
 	/**
@@ -38,23 +38,62 @@ var T9 = function(_wordList, _config) {
 	 * @return {Array}      The array of Strings with the predicted words
 	 */
 	 this.predict = function(word, amount) {
-	 	var auxBranch = root;
+
+	 	if(typeof word === 'undefined') {
+	 		return [];
+	 	}
+
+	 	var currentBranch = root;
+	 	var finishedWord = false;
+	 	// var baseWord = word;
+	 	var baseWord = '';
 
 		//Goes through the tree until it finds the branch from
 		//where it will begin to predict
-		for(var _ch_ in word) {
-			var ch = word[_ch_]; //Get the current character from the word
+		
+		while(!finishedWord) {
+			var found = false;
+			for(var i = 0; i < word.length && !found; i++) {
+				var subString = word.substring(0, word.length - i);
 
-			//If the leaf branch with the current character exists, goes to the next branch
-			if(typeof auxBranch.branches[ch] !== 'undefined') {
-				auxBranch = auxBranch.branches[ch];
+				for(var branch in currentBranch.branches) {
+					if(currentBranch.branches[branch].prefix.indexOf(subString) === 0) {
+						baseWord += currentBranch.branches[branch].prefix;
+
+						if(currentBranch.branches[branch].prefix === subString) {
+							word = word.substring(word.length - i);
+						}
+						//In cases where it begins with the substring, but doesn't end with it
+						//so it should just start the search from there
+						else { 
+							word = '';
+						}
+
+						currentBranch = currentBranch.branches[branch];
+						found = true;
+						break;
+					}
+				}
 			}
-			else {
+
+			if(!found) {
+				// console.log('No matches');
 				return [];
 			}
+
+			if(word.length === 0) {
+				finishedWord = true;
+			}
+
 		}
 
-		var predictedList = _exploreBranch(word, auxBranch);
+		if(currentBranch.$ === true)
+			var currentWord = baseWord;
+
+		var predictedList = _exploreBranch(baseWord, currentBranch);
+
+		if(currentWord)
+			predictedList.push(currentWord);
 
 		predictedList.sort(config.sort);
 
@@ -71,62 +110,27 @@ var T9 = function(_wordList, _config) {
 	};
 
 	/**
-	 * Executes a BFS looking for the words that contain the word passed as parameter
+	 * Looks for the words that contain the word passed as parameter
 	 * @param  {String} baseWord The base to look for
-	 * @param  {Object} branch   The begining branch
+	 * @param  {Object} currentBranch   The begining branch
 	 * @return {Array}          List of predicted words
 	 */
-	 var _exploreBranch = function(baseWord, branch) {
-	 	var predictedList = [],
-	 	stack = [],
-	 	keys,
-	 	node =  {ch : '', word: baseWord, branch : branch};
+	 var _exploreBranch = function(baseWord, currentBranch) {
+	 	var predictedList = [];
 
- 		stack.push(node);
+		for(var b in currentBranch.branches) { //For each branch forking from the branch
+			var prefix = currentBranch.branches[b].prefix; //Get the leading character of the current branch
 
- 		while(stack.length != 0) {
- 			node = stack.shift();
-
-			//If the current leaf ends a word, puts the word on the list
-			if(node.branch.$) {
-				predictedList.push(node.word + node.ch);
+			if(currentBranch.branches[b].$ === true) { //If the current leaf ends a word, puts the word on the list
+				predictedList.push(baseWord + prefix);
 			}
 
-			//Get the branch names that forks from the branch
-			keys = Object.keys(node.branch.branches);
+			//Recursively calls the function, passing the forking branches as parameter
+			var predictedWords = _exploreBranch(baseWord + prefix, currentBranch.branches[b]);
 
-			if(keys.length > 0) {
+			predictedList = predictedList.concat(predictedWords);
 
-				//Tests if the search can be stopped
-				if(predictedList.length < config.maxAmount/* && keys.length > 0*/) {
-
-					//Create a string object, so it will be the same reference in every children
-					var currentWord = new String(node.word + node.ch);
-
-					//Order the key array, so in the next iteration,
-					//if the maxAmount get reached, the search stops before
-					//the other branches be searched
-					keys.sort();
-
-					for(var _ch_ in keys) {
-						var ch = keys[_ch_];
-
-						var newNode = {
-							ch : ch,
-							word : currentWord,
-							branch : node.branch.branches[ch]
-						};
-
-						stack.push(newNode)
-					}
-
-				}
-				else {
-					return predictedList;
-				}
-			}
 		}
-
 		return predictedList;
 	};
 
@@ -135,26 +139,108 @@ var T9 = function(_wordList, _config) {
 	 * @param {String} word Word to be added to the tree
 	 */
 	 this.addWord = function(word) {
-	 	var auxBranch = root;
+		//Cases:
+		//	1: current_node_prefix == word to add
+		//		
+		//	2: word [begins with] current_node_prefix to add
+		//		
+		//	3: current_node_prefix [begins with] part_of_or_whole(word to add) 
+		//	
+		//	4: (current_node_prefix ∩ word) == empty
 
-		//For each character of the current word
-		for(var _ch_ in word) {
-			var ch = word[_ch_]; //Get the current character of the word
+		var branch = root;
+		var stop = false;
 
-			//If the branch doesn't have the word yet
-			if(typeof auxBranch.branches[ch] === 'undefined') {
-				auxBranch.branches[ch] = { //Adds a new leaf to the tree
-					branches : {}
-				};
+		while(!stop) {
+			var contains = false;
+			var isCase3 = false;
+
+
+			//Looks for how branch it should follow
+			for(var b in branch.branches) {
+				//Case 1:
+				if(branch.branches[b].prefix === word) {
+					branch.branches[b].$ = true;
+					return;
+				}
+
+				//Case 2:
+				//Cuts the word and goes to the next branch
+				if(word.indexOf(branch.branches[b].prefix) === 0) {
+					contains = true;
+					word = word.substring(branch.branches[b].prefix.length);
+					branch = branch.branches[b];
+					break;
+				}
+
+				//Case 3
+				for(var i = 0; i <= word.length - 1; i++) {
+					//Cuts the word starting from the end,
+					//so it "merges" words that just begin equal between them
+					var cutWord = word.substring(0, word.length-i);
+
+					var restPrefix = word.substring(word.length-i);
+
+					if(branch.branches[b].prefix.indexOf(cutWord) === 0) {
+						//The new node where the word is cut
+						var newNode = {
+							prefix : cutWord,
+							branches : [],
+							$ : (restPrefix.length === 0)
+						};
+
+						//The node that inherit the data from the old node
+						//that was cut
+						var inheritedNode = {
+							prefix : branch.branches[b].prefix.substring(cutWord.length),
+							branches : branch.branches[b].branches,
+							$ : branch.branches[b].$
+						};
+
+						branch.branches[b] = newNode;
+						branch.branches[b].branches.push(inheritedNode);
+
+						//If the prefixes only begin equal, creates the new node
+						//with the rest of the prefix
+						if(restPrefix.length > 0) {
+							var restNode = {
+								prefix : restPrefix,
+								branches : [],
+								$ : true
+							};
+
+							branch.branches[b].branches.push(restNode);
+						}
+
+						stop = contains =  true;
+						isCase3 = true;
+						break;
+					}
+				}
+
+				if(isCase3) {
+					break;
+				}
+
+
 			}
-			auxBranch = auxBranch.branches[ch];
-		}
 
-		auxBranch.$ = true;
+			//Case 4:
+			if(!contains) {
+				var newNode = {
+					prefix : word,
+					branches : [],
+					$ : true
+				};
+
+				branch.branches.push(newNode);
+				stop = true;
+			}
+		}
 	};
 
 	/**
-	 *	Starts the trie tree with the list of words
+	 *	Starts the tree with the list of words
 	 * 
 	 * @constructor
 	 */
@@ -164,7 +250,7 @@ var T9 = function(_wordList, _config) {
 
 			var word = wordList[_word_]; //Get the current word to be added to the three
 
-			_.addWord(word);
+			self.addWord(word);
 		}
 
 	};

@@ -139,20 +139,21 @@ var T9 = function(_wordList, _config) {
 	 * @param {String} word Word to be added to the tree
 	 */
 	 this.addWord = function(word) {
+	 	
 		//Cases:
-		//	1: current_node_prefix == word to add
+		//	1: current node prefix == word to add
 		//		
-		//	2: word [begins with] current_node_prefix to add
+		//	2: word begins with current node prefix to add
 		//		
-		//	3: current_node_prefix [begins with] part_of_or_whole(word to add) 
+		//	3: current node prefix begins with part of or whole word to add 
 		//	
-		//	4: (current_node_prefix ∩ word) == empty
+		//	4: current node prefix intersection with word == empty
 
 		var branch = root;
-		var stop = false;
+		var stopSearchOnCurrentBranch = false;
 
-		while(!stop) {
-			var contains = false;
+		while(!stopSearchOnCurrentBranch) {
+			var wordContainsThePrefix = false;
 			var isCase3 = false;
 
 
@@ -167,7 +168,7 @@ var T9 = function(_wordList, _config) {
 				//Case 2:
 				//Cuts the word and goes to the next branch
 				if(word.indexOf(branch.branches[b].prefix) === 0) {
-					contains = true;
+					wordContainsThePrefix = true;
 					word = word.substring(branch.branches[b].prefix.length);
 					branch = branch.branches[b];
 					break;
@@ -212,7 +213,7 @@ var T9 = function(_wordList, _config) {
 							branch.branches[b].branches.push(restNode);
 						}
 
-						stop = contains =  true;
+						stopSearchOnCurrentBranch = wordContainsThePrefix =  true;
 						isCase3 = true;
 						break;
 					}
@@ -226,7 +227,7 @@ var T9 = function(_wordList, _config) {
 			}
 
 			//Case 4:
-			if(!contains) {
+			if(!wordContainsThePrefix) {
 				var newNode = {
 					prefix : word,
 					branches : [],
@@ -234,7 +235,7 @@ var T9 = function(_wordList, _config) {
 				};
 
 				branch.branches.push(newNode);
-				stop = true;
+				stopSearchOnCurrentBranch = true;
 			}
 		}
 	};

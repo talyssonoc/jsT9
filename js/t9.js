@@ -45,7 +45,6 @@ var T9 = function(_wordList, _config) {
 
 	 	var currentBranch = root;
 	 	var finishedWord = false;
-	 	// var baseWord = word;
 	 	var baseWord = '';
 
 		//Goes through the tree until it finds the branch from

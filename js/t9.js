@@ -1,7 +1,6 @@
 var T9 = function(_wordList, _config) {
 	var self = this;
-
-	var wordList = _wordList;
+	var wordList;
 
 	var config = {
 		sort : function(wordA, wordB) {
@@ -15,7 +14,8 @@ var T9 = function(_wordList, _config) {
 				return 1;
 		},
 		maxAmount : Infinity,
-		caseSentitive : true
+		caseSentitive : true,
+		dataSource : ''
 	};
 
 	// Extends the config options
@@ -240,11 +240,70 @@ var T9 = function(_wordList, _config) {
 	};
 
 	/**
+	 * Fetches the word list from an address
+	 * @param  {String} path Path of a JSON file with an array called 'words' with the word list
+	 * @return {Arrat}      Word list extracted from the given path
+	 */
+	var fetchWordList = function(path) {
+		// var httpRequest = new XMLHttpRequest();
+		var httpRequest;
+		var words = [];
+
+		try {
+			// Firefox, Chrome, Opera, Safari
+			httpRequest = new XMLHttpRequest();
+		} catch (e){
+			// Internet Explorer
+			try {
+				httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch (e) {
+				try {
+					httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (e) {
+					// The browser doesn't support AJAX
+					return [];
+				}
+			}
+		}
+
+		httpRequest.onreadystatechange  = function(){
+			if (httpRequest.readyState === 4) {
+
+				var jsonData = JSON.parse(httpRequest.responseText);
+
+				if(Array.isArray(jsonData.words)) {
+					words = jsonData.words;
+				}
+				else {
+					return [];
+				}
+				
+			}
+		}
+
+		httpRequest.open('GET', path, false);
+		httpRequest.send();
+
+		return words;
+	}
+
+	/**
 	 *	Starts the tree with the list of words
 	 * 
 	 * @constructor
 	 */
 	 var _init = function() {
+
+	 	if(Array.isArray(_wordList)) {
+			wordList = _wordList;
+		}
+		else if((typeof _wordList) === 'string') {
+			wordList = fetchWordList(_wordList);
+		}
+		else {
+			throw (typeof _wordList) + ' variable is not supported as data source';
+		}
+
 		// For each word in the list
 		for(var _word_ in wordList) {
 

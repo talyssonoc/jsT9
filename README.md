@@ -3,12 +3,13 @@ jsT9
 
 A text-prediction JavaScript tool developed using PATRICIA tree
 
-Usage
-=====
+Constructor arguments
+=====================
 
-Create an instance of T9 passing an array of strings with the terms that will be added to the tree. 
+Create a new T9(words[, settings]) instance, where:
 
-And, if needed, a second argument with custom settings (look in the next section).
+* `words` is an array of words or a string with the path of a JSON file with a field called 'words' with an array of words (see the words.json file).
+* `settings` (optional) is a custom settings object (look the next section).
 
 Custom settings
 ===============

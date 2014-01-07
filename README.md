@@ -6,7 +6,7 @@ A text-prediction JavaScript tool developed using PATRICIA tree
 Constructor arguments
 =====================
 
-Create a new T9(words[, settings]) instance, where:
+Create a new jsT9(words[, settings]) instance, where:
 
 * `words` is an array of words or a string with the path of a JSON file with a field called 'words' with an array of words (see the words.json file).
 * `settings` (optional) is a custom settings object (look the next section).

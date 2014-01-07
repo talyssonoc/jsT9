@@ -1,4 +1,4 @@
-var T9 = function(_wordList, _config) {
+var jsT9 = function(_wordList, _config) {
 	var self = this;
 	var wordList;
 

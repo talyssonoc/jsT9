@@ -1,7 +1,9 @@
 jsT9
 ====
 
-A text-prediction JavaScript tool developed using PATRICIA tree
+A text-prediction JavaScript tool developed using PATRICIA tree.
+
+Used by [jsAutoSuggest](https://github.com/talyssonoc/jsAutoSuggest "jsAutoSuggest")
 
 Constructor arguments
 =====================

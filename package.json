@@ -1,7 +1,7 @@
 {
   "name": "jst9",
   "description": "A text-prediction JavaScript tool based on PATRICIA tree",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/talyssonoc/jst9",
   "author": {
     "name": "Talysson",

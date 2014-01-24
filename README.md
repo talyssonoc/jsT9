@@ -19,6 +19,10 @@ Or importing it with RequireJS, putting `t9.js` file inside your RequireJS base 
     }
 
 
+Or install via NPM with:
+
+    npm install jst9
+
 To create a new jsT9 instance, you show use the constructor like this:
 
     var tree = new jsT9(words[, settings]);
@@ -27,7 +31,7 @@ Where:
 
 * `words` can be:
   * An array of words, or
-  * A string with the path of a JSON file with a field called 'words', with an array of words (see the words.json example file). Not supported in Node.js enviroment.
+  * A string with the path of a JSON file with a field called 'words', with an array of words (see the words.json example file). __Not supported in Node.js enviroment__.
 * `settings` (optional) is a custom settings object (look the next section).
 
 Custom settings

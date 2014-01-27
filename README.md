@@ -8,9 +8,9 @@ Used by [jsAutoSuggest](https://github.com/talyssonoc/jsAutoSuggest "jsAutoSugge
 Usage
 ======
 
-You can use jsT9 normally, using a script tag:
+You can use [jsT9](https://github.com/talyssonoc/jsT9/blob/master/lib/jst9.js) normally, using a script tag:
 
-    <script src="commonregex.js"></script>
+    <script src="t9.js"></script>
 
 Or importing it with RequireJS, putting `t9.js` file inside your RequireJS base directory using like this:
 

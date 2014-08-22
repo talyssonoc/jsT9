@@ -87,15 +87,24 @@ var t9 = new jsT9([
   ]);
 
 describe('jsT9 module', function(){
-  it('L', function() {
-    expect(t9.predict('L')).to.eql(['Lorem']);
-  });
+    it('Predict "L"', function() {
+        expect(t9.predict('L')).to.eql(['Lorem']);
+    });
 
-  it('ad', function() {
-    expect(t9.predict('ad')).to.eql(['ad', 'adipisicing']);
-  });
+    it('Predict "ad"', function() {
+        expect(t9.predict('ad')).to.eql(['ad', 'adipisicing']);
+    });
 
-  it('l', function() {
-    expect(t9.predict('l')).to.eql(['labore', 'laboris', 'laborum']);
-  });
+    it('Predict "l"', function() {
+        expect(t9.predict('l')).to.eql(['labore', 'laboris', 'laborum']);
+    });
+
+    it('Add new world and find it', function() {
+        t9.addWord('testing jsT9');
+        expect(t9.predict('testing')).to.eql(['testing jsT9']);
+    });
+
+    it('Should get an empty array if no matches are found', function() {
+        expect(t9.predict('Yep, it is not there')).to.eql([]);
+    });
 });

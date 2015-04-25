@@ -72,21 +72,43 @@ jsT9.prototype = {
    */
   predict: function predict(word, amount) {
 
-    if (typeof word === 'undefined') {
+    if (!word) {
       return [];
     }
 
     amount = amount || this.config.maxAmount;
 
+    var currentWord = false;
+
+    var initialBranchResult = this._findInitialBranch(word);
+
+    if(!initialBranchResult) {
+      return [];
+    }
+
+    if (initialBranchResult.currentBranch.$ === true) {
+      currentWord = initialBranchResult.baseWord;
+    }
+
+    var predictedList = this._exploreBranch(initialBranchResult.baseWord, initialBranchResult.currentBranch);
+
+    if (currentWord) {
+      predictedList.push(currentWord);
+    }
+
+    predictedList.sort(this.config.sort);
+
+    return predictedList.slice(0, amount);
+  },
+
+  _findInitialBranch: function _findInitialBranch(word) {
     var currentBranch = this.root;
     var finishedWord = false;
     var baseWord = '';
-
-    //Goes through the tree until it finds the branch from
-    //where it will begin to predict
+    var found;
 
     while (!finishedWord) {
-      var found = false;
+      found = false;
       for (var i = 0; i < word.length && !found; i++) {
         var subString = word.substring(0, word.length - i);
 
@@ -111,8 +133,7 @@ jsT9.prototype = {
       }
 
       if (!found) {
-        // console.log('No matches');
-        return [];
+        return false;
       }
 
       if (word.length === 0) {
@@ -120,21 +141,10 @@ jsT9.prototype = {
       }
     }
 
-    var currentWord;
-
-    if (currentBranch.$ === true) {
-      currentWord = baseWord;
-    }
-
-    var predictedList = this._exploreBranch(baseWord, currentBranch);
-
-    if (currentWord) {
-      predictedList.push(currentWord);
-    }
-
-    predictedList.sort(this.config.sort);
-
-    return predictedList.slice(0, amount);
+    return {
+      currentBranch: currentBranch,
+      baseWord: baseWord
+    };
   },
 
   /**

@@ -1,0 +1,36 @@
+{
+  "name": "jst9",
+  "description": "A text-prediction JavaScript tool based on PATRICIA tree",
+  "version": "0.2.0",
+  "main": "dist/jst9.js",
+  "keywords": [
+    "text prediction",
+    "autocomplete",
+    "tree",
+    "patricia",
+    "typeahead"
+  ],
+  "authors": [
+    "talyssonoc <talyssonoc@gmail.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/talyssonoc/jst9.git"
+  },
+  "bugs": {
+    "url": "https://github.com/talyssonoc/jst9/issues"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.5.4"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "example",
+    "src"
+  ]
+}

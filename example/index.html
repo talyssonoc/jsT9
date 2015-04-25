@@ -1,151 +1,152 @@
 <html>
 <head>
-	<meta charset="utf-8"/>
+  <meta charset="utf-8"/>
 
-	<title>jsT9 example</title>
+  <title>jsT9 example</title>
 
-	<style>
-		#in,
-		#out {
-			width: 400px;
-			height: 400px;
-			border: 1px solid rgba(150, 150, 150, 0.5);
-			margin: auto;
-			padding: 5px;
-			margin-top: 30px;
-			border-radius: 5px;
-			box-shadow: 1px 1px 1px 1px rgba(150, 150, 150, 0.5); 
-			font-family: arial;
-			overflow: auto;
-		}
+  <style>
+    #in,
+    #out {
+      width: 400px;
+      height: 400px;
+      border: 1px solid rgba(150, 150, 150, 0.5);
+      margin: auto;
+      padding: 5px;
+      margin-top: 30px;
+      border-radius: 5px;
+      box-shadow: 1px 1px 1px 1px rgba(150, 150, 150, 0.5);
+      font-family: arial;
+      overflow: auto;
+    }
 
-		#in {
-			height: auto;
-			text-align: center;
-		}
+    #in {
+      height: auto;
+      text-align: center;
+    }
 
-		#in input {
-			width: 100%;
-		}
+    #in input {
+      width: 100%;
+    }
 
-	</style>
+  </style>
 
-	<script type="text/javascript" src="../lib/jst9.js"></script>
+  <script type="text/javascript" src="../bower_components/axios/dist/axios.js"></script>
+  <script type="text/javascript" src="../dist/jst9.js"></script>
 
-	<script>
-		var words = [
-			'adipisicing', 
-			'ad', 
-			'aliqua', 
-			'aliquip', 
-			'amet', 
-			'anim', 
-			'aute', 
-			'cillum', 
-			'commodo', 
-			'consectetur', 
-			'consequat', 
-			'culpa', 
-			'cupidatat', 
-			'deserunt', 
-			'do', 
-			'dolor', 
-			'dolor', 
-			'dolore', 
-			'dolore', 
-			'Duis', 
-			'ea', 
-			'eiusmod', 
-			'elit', 
-			'enim', 
-			'esse', 
-			'est', 
-			'et', 
-			'eu', 
-			'ex', 
-			'Excepteur', 
-			'exercitation', 
-			'fugiat', 
-			'id', 
-			'in', 
-			'in', 
-			'in', 
-			'incididunt', 
-			'ipsum', 
-			'irure', 
-			'labore', 
-			'laboris', 
-			'laborum',
-			'Lorem', 
-			'magna', 
-			'minim', 
-			'mollit', 
-			'nisi', 
-			'non', 
-			'nostrud', 
-			'nulla', 
-			'occaecat', 
-			'officia', 
-			'pariatur', 
-			'proident', 
-			'qui', 
-			'quis', 
-			'reprehenderit', 
-			'sed', 
-			'sint', 
-			'sit', 
-			'sunt', 
-			'tempor', 
-			'ullamco', 
-			'Ut', 
-			'ut', 
-			'ut', 
-			'velit', 
-			'veniam', 
-			'voluptate'
-		]; 
+  <script>
+    var words = [
+      'adipisicing',
+      'ad',
+      'aliqua',
+      'aliquip',
+      'amet',
+      'anim',
+      'aute',
+      'cillum',
+      'commodo',
+      'consectetur',
+      'consequat',
+      'culpa',
+      'cupidatat',
+      'deserunt',
+      'do',
+      'dolor',
+      'dolor',
+      'dolore',
+      'dolore',
+      'Duis',
+      'ea',
+      'eiusmod',
+      'elit',
+      'enim',
+      'esse',
+      'est',
+      'et',
+      'eu',
+      'ex',
+      'Excepteur',
+      'exercitation',
+      'fugiat',
+      'id',
+      'in',
+      'in',
+      'in',
+      'incididunt',
+      'ipsum',
+      'irure',
+      'labore',
+      'laboris',
+      'laborum',
+      'Lorem',
+      'magna',
+      'minim',
+      'mollit',
+      'nisi',
+      'non',
+      'nostrud',
+      'nulla',
+      'occaecat',
+      'officia',
+      'pariatur',
+      'proident',
+      'qui',
+      'quis',
+      'reprehenderit',
+      'sed',
+      'sint',
+      'sit',
+      'sunt',
+      'tempor',
+      'ullamco',
+      'Ut',
+      'ut',
+      'ut',
+      'velit',
+      'veniam',
+      'voluptate'
+    ];
 
-		var settings = {
-			maxAmount : 15
-		};
+    var settings = {
+      maxAmount : 15
+    };
 
-		var tree = new jsT9(words, settings);
+    var tree = new jsT9(words, settings);
 
-		window.onload = function() {
+    window.onload = function() {
 
-			var out = document.getElementById('out'),
-				field = document.getElementById('inField');
+      var out = document.getElementById('out'),
+        field = document.getElementById('inField');
 
-			field.onkeyup = function() {
+      field.onkeyup = function() {
 
-				if(field.value !== '') {
-					var predictions = tree.predict(field.value);
+        if(field.value !== '') {
+          var predictions = tree.predict(field.value);
 
-					if(predictions.length > 0) {
-						out.innerHTML = predictions.join('<br/>');
-					}
-					else {
-						out.innerHTML = '';
-					}
-				}
-				else {
-					out.innerHTML = '';
-				}
+          if(predictions.length > 0) {
+            out.innerHTML = predictions.join('<br/>');
+          }
+          else {
+            out.innerHTML = '';
+          }
+        }
+        else {
+          out.innerHTML = '';
+        }
 
-			};
-		};
-	</script>
+      };
+    };
+  </script>
 
 </head>
 <body>
 
-	<div id="in">
-		<input type="text" id="inField"/>
-	</div>
+  <div id="in">
+    <input type="text" id="inField"/>
+  </div>
 
-	<div id="out">
+  <div id="out">
 
-	</div>
+  </div>
 
 </body>
 </html>

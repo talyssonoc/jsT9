@@ -131,35 +131,26 @@ jsT9.prototype = {
    */
   addWord: function addWord(word) {
 
-    //Cases:
-    //  1: current node prefix == word to add
-    //
-    //  2: word begins with current node prefix to add
-    //
-    //  3: current node prefix begins with part of or whole word to add
-    //
-    //  4: current node prefix intersection with word == empty
-
     var branch = this.root;
     var stopSearchOnCurrentBranch = false;
     var newNode;
 
     while (!stopSearchOnCurrentBranch) {
       var wordContainsThePrefix = false;
-      var case2Result = false;
       var isCase3 = false;
+      var case2Result;
 
       //Looks for how branch it should follow
       for (var b in branch.branches) {
 
-        //Case 1: current node prefix == word to add
-        if(this.tryCase1(branch, word, b)) {
+        //Case 1: current node prefix == `word`
+        if(this._tryCase1(branch, word, b)) {
           return;
         }
 
-        //Case 2: word begins with current node prefix to add
+        //Case 2: `word` begins with current node prefix to add
         //Cuts the word and goes to the next branch
-        case2Result = this.tryCase2(branch, word, b);
+        case2Result = this._tryCase2(branch, word, b);
         if(case2Result) {
           word = case2Result.word;
           branch = case2Result.branch;
@@ -167,71 +158,21 @@ jsT9.prototype = {
           break;
         }
 
-        //Case 3
-        for (var i = 0; i <= word.length - 1; i++) {
-          //Cuts the word starting from the end,
-          //so it "merges" words that just begin equal between them
-          var cutWord = word.substring(0, word.length - i);
-
-          var restPrefix = word.substring(word.length - i);
-
-          if (branch.branches[b].prefix.indexOf(cutWord) === 0) {
-            //The new node where the word is cut
-            newNode = {
-              prefix: cutWord,
-              branches: [],
-              $: (restPrefix.length === 0)
-            };
-
-            //The node that inherits the data from the old node
-            //that was cut
-            var inheritedNode = {
-              prefix: branch.branches[b].prefix.substring(cutWord.length),
-              branches: branch.branches[b].branches,
-              $: branch.branches[b].$
-            };
-
-            branch.branches[b] = newNode;
-            branch.branches[b].branches.push(inheritedNode);
-
-            //If the prefixes only begin equal, creates the new node
-            //with the rest of the prefix
-            if (restPrefix.length > 0) {
-              var restNode = {
-                prefix: restPrefix,
-                branches: [],
-                $: true
-              };
-
-              branch.branches[b].branches.push(restNode);
-            }
-
-            stopSearchOnCurrentBranch = wordContainsThePrefix = true;
-            isCase3 = true;
-            break;
-          }
-        }
-
-        if (isCase3) {
+        //Case 3: current node prefix begins with part of or whole `word`
+        if(this._tryCase3(branch, word, b)) {
+          isCase3 = stopSearchOnCurrentBranch = wordContainsThePrefix = true;
           break;
         }
       }
 
-      //Case 4:
-      if (!wordContainsThePrefix) {
-        newNode = {
-          prefix: word,
-          branches: [],
-          $: true
-        };
-
-        branch.branches.push(newNode);
+      //Case 4: current node prefix doesn't have intersection with `word`
+      if(this._tryCase4(branch, word, wordContainsThePrefix)) {
         stopSearchOnCurrentBranch = true;
       }
     }
   },
 
-  tryCase1: function tryCase1(branch, word, b) {
+  _tryCase1: function _tryCase1(branch, word, b) {
     if (branch.branches[b].prefix === word) {
       branch.branches[b].$ = true;
       return true;
@@ -240,7 +181,7 @@ jsT9.prototype = {
     return false;
   },
 
-  tryCase2: function tryCase2(branch, word, b) {
+  _tryCase2: function _tryCase2(branch, word, b) {
     if (word.indexOf(branch.branches[b].prefix) === 0) {
       word = word.substring(branch.branches[b].prefix.length);
       branch = branch.branches[b];
@@ -249,6 +190,69 @@ jsT9.prototype = {
         branch: branch,
         word: word
       };
+    }
+
+    return false;
+  },
+
+  _tryCase3: function _tryCase3(branch, word, b) {
+    var newNode;
+
+    for (var i = 0; i <= word.length - 1; i++) {
+      //Cuts the word starting from the end,
+      //so it "merges" words that just begin equal between them
+      var cutWord = word.substring(0, word.length - i);
+
+      var restPrefix = word.substring(word.length - i);
+
+      if (branch.branches[b].prefix.indexOf(cutWord) === 0) {
+        //The new node where the word is cut
+        newNode = {
+          prefix: cutWord,
+          branches: [],
+          $: (restPrefix.length === 0)
+        };
+
+        //The node that inherits the data from the old node
+        //that was cut
+        var inheritedNode = {
+          prefix: branch.branches[b].prefix.substring(cutWord.length),
+          branches: branch.branches[b].branches,
+          $: branch.branches[b].$
+        };
+
+        branch.branches[b] = newNode;
+        branch.branches[b].branches.push(inheritedNode);
+
+        //If the prefixes only begin equal, creates the new node
+        //with the rest of the prefix
+        if (restPrefix.length > 0) {
+          var restNode = {
+            prefix: restPrefix,
+            branches: [],
+            $: true
+          };
+
+          branch.branches[b].branches.push(restNode);
+        }
+
+        return true;
+      }
+    }
+  },
+
+  _tryCase4: function _tryCase4(branch, word, wordContainsThePrefix) {
+    var newNode;
+
+    if (!wordContainsThePrefix) {
+      newNode = {
+        prefix: word,
+        branches: [],
+        $: true
+      };
+
+      branch.branches.push(newNode);
+      return true;
     }
 
     return false;

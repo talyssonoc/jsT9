@@ -1,50 +1,43 @@
-jsT9
-====
+# jsT9
 
-A text-prediction JavaScript tool developed using PATRICIA tree.
+## Installation
 
-Used by [jsAutoSuggest](https://github.com/talyssonoc/jsAutoSuggest "jsAutoSuggest")
+With npm
 
-Usage
-======
+```
+  $ npm install jst9 --save
+```
 
-You can use [jsT9](https://github.com/talyssonoc/jsT9/blob/master/lib/jst9.js) normally, using a script tag:
+With Bower
 
-    <script src="t9.js"></script>
+```
+  $ bower install jst9 --save
+```
 
-Or importing it with RequireJS, putting `t9.js` file inside your RequireJS base directory using like this:
+Or copy some of the files inside `dist` folder.
+On browsers, it exports the `jsT9` global.
 
-    requirejs(['t9'], function(jsT9) {
-        //Use jsT9 normally here
-    }
-
-
-Or install via NPM with:
-
-    npm install jst9
+## Usage
 
 To create a new jsT9 instance, you show use the constructor like this:
 
-    var tree = new jsT9(words[, settings]);
+```
+  var tree = new jsT9(words[, settings]);
+```
 
 Where:
 
-* `words` can be:
-  * An array of words, or
-  * A string with the path of a JSON file with a field called 'words', with an array of words (see the words.json example file). __Not supported in Node.js enviroment__.
-* `settings` (optional) is a custom settings object (look the next section).
+- `words` can be:
+  - An array of words, or
+  - A string with the path of a JSON file with a field called 'words' containing the array of words (see the words.json example file).
+- `settings` (optional)
+  - `sort`: A `sort(A, B)` function that returns:  
+    - -1 if `A < B`
+    - 1 if `A > B`
+    - 0 if `A == B`
+  - `maxAmount`: Default max amount of predictions to be returned.
 
-Custom settings
-===============
+## API
 
-* `sort`: A sort(A, B) function that receives two strings as parameters and returns:  
-  * -1 if A < B  
-  * 1 if A > B  
-  * 0 if A == B
-* `maxAmount`: Default max amount of predictions to be returned.
-
-API
-===
-
-* `predict(word)`: Return the predictions to the given word.
-* `addWord(word)`: Add an new word to the tree.
+- `predict(word)`: Return the predictions to the given word.
+- `addWord(word)`: Add an new word to the tree.

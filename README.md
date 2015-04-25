@@ -1,5 +1,7 @@
 # jsT9
 
+[![Build Status](https://travis-ci.org/talyssonoc/jsT9.svg?branch=master)](https://travis-ci.org/talyssonoc/jsT9) [![Code Climate](https://codeclimate.com/github/talyssonoc/jsT9/badges/gpa.svg)](https://codeclimate.com/github/talyssonoc/jsT9)
+
 ## Installation
 
 With npm

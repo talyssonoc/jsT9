@@ -43,3 +43,16 @@ Where:
 
 - `predict(word)`: Return the predictions to the given word.
 - `addWord(word)`: Add an new word to the tree.
+
+## About `predict`
+
+If no complete word in the tree matches the searched word, `jsT9` will remove the last character of the word, one by one, until it find a match.
+
+Example:
+
+Given this word list:
+  - List
+  - Look
+  - Loop
+
+If you predict `Loo`, you'll get `["Look", "Loop"]`. But if you predict `Lx`, you'll get `["List", "Look", "Loop"]`.

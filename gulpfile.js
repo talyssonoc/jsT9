@@ -42,7 +42,7 @@ gulp.task('build', ['clean'], function() {
             global: 'axios',
             param: 'axios'
           }
-        ]
+        ];
       },
 
       template: path.join(__dirname, '/src/umdTemplate.js')

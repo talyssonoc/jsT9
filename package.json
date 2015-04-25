@@ -2,6 +2,14 @@
   "name": "jst9",
   "description": "A text-prediction JavaScript tool based on PATRICIA tree",
   "version": "0.2.0",
+  "main": "dist/jst9",
+  "keywords": [
+    "text prediction",
+    "autocomplete",
+    "tree",
+    "patricia",
+    "typeahead"
+  ],
   "homepage": "https://github.com/talyssonoc/jst9",
   "author": {
     "name": "Talysson",
@@ -20,13 +28,12 @@
       "url": "https://github.com/talyssonoc/jst9/blob/master/LICENSE"
     }
   ],
-  "main": "lib/jst9",
-  "engines": {
-    "node": ">= 0.10.0"
-  },
   "scripts": {
     "test": "gulp test",
     "build": "gulp build"
+  },
+  "dependencies": {
+    "axios": "^0.5.4"
   },
   "devDependencies": {
     "chai": "^2.2.0",
@@ -40,14 +47,7 @@
     "gulp-umd": "^0.1.3",
     "mocha": "^2.2.1"
   },
-  "keywords": [
-    "text-prediction",
-    "auto-complete",
-    "tree",
-    "patricia",
-    "type-ahead"
-  ],
-  "dependencies": {
-    "axios": "^0.5.4"
+  "engines": {
+    "node": ">= 0.10.0"
   }
 }

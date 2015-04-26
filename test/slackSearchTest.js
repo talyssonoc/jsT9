@@ -15,27 +15,31 @@ var jsT9 = require('../dist/jst9');
 
 var lorem = require('./fixtures/lorem_tree');
 
-var t9 = new jsT9(lorem);
+var tree = new jsT9(lorem);
 
- describe('jsT9 module', function(){
+ describe('Slack search tests', function(){
   it('Predict "L"', function() {
-    expect(t9.predict('L')).to.eql(['Lorem']);
+    expect(tree.predict('L')).to.eql(['Lorem']);
+  });
+
+  it('Predict "Lx" and find matches for "L"', function() {
+    expect(tree.predict('Lx')).to.eql(['Lorem']);
   });
 
   it('Predict "ad"', function() {
-    expect(t9.predict('ad')).to.eql(['ad', 'adipisicing']);
+    expect(tree.predict('ad')).to.eql(['ad', 'adipisicing']);
   });
 
   it('Predict "l"', function() {
-    expect(t9.predict('l')).to.eql(['labore', 'laboris', 'laborum']);
+    expect(tree.predict('l')).to.eql(['labore', 'laboris', 'laborum']);
   });
 
   it('Add new world and find it', function() {
-    t9.addWord('testing jsT9');
-    expect(t9.predict('testing')).to.eql(['testing jsT9']);
+    tree.addWord('testing jsT9');
+    expect(tree.predict('testing')).to.eql(['testing jsT9']);
   });
 
   it('Should get an empty array if no matches are found', function() {
-    expect(t9.predict('Yep, it is not there')).to.eql([]);
+    expect(tree.predict('Yep, it is not there')).to.eql([]);
   });
 });

@@ -33,7 +33,7 @@ var jsT9 = function jsT9(_wordList, _config) {
     },
     maxAmount: Infinity,
     caseSentitive: true,
-    dataSource: ''
+    slackSearch: true
   };
 
   // Extends the config options
@@ -103,16 +103,74 @@ jsT9.prototype = {
 
   _findInitialBranch: function _findInitialBranch(word) {
     var currentBranch = this.root;
-    var finishedWord = false;
+
+    if(this.config.slackSearch) {
+      return this._slackSearch(word, currentBranch);
+    }
+
+    return this._normalSearch(word, currentBranch);
+  },
+
+  _normalSearch: function _normalSearch(word, currentBranch) {
     var baseWord = '';
+    var branchPrefix;
+    var branch;
     var found;
 
-    while (!finishedWord) {
+    while(word.length) {
       found = false;
-      for (var i = 0; i < word.length && !found; i++) {
-        var subString = word.substring(0, word.length - i);
+      for(branch in currentBranch.branches) {
+        branchPrefix = currentBranch.branches[branch].prefix;
 
-        for (var branch in currentBranch.branches) {
+        if(word.length < branchPrefix.length) {
+
+          if(branchPrefix.indexOf(word) === 0) {
+            baseWord += branchPrefix;
+
+            return {
+              currentBranch: currentBranch.branches[branch],
+              baseWord: baseWord
+            };
+          }
+        }
+        else {
+
+          if(word.indexOf(branchPrefix) === 0) {
+            baseWord += branchPrefix;
+
+            word = word.substring(branchPrefix.length);
+            currentBranch = currentBranch.branches[branch];
+            found = true;
+            break;
+          }
+        }
+      }
+
+      if(!found) {
+        return false;
+      }
+    }
+
+    return {
+      currentBranch: currentBranch,
+      baseWord: baseWord
+    };
+
+  },
+
+  _slackSearch: function _slackSearch(word, currentBranch) {
+    var baseWord = '';
+    var subString;
+    var branch;
+    var found;
+    var i;
+
+    while (word.length) {
+      found = false;
+      for (i = 0; i < word.length && !found; i++) {
+        subString = word.substring(0, word.length - i);
+
+        for (branch in currentBranch.branches) {
           if (currentBranch.branches[branch].prefix.indexOf(subString) === 0) {
             baseWord += currentBranch.branches[branch].prefix;
 
@@ -134,10 +192,6 @@ jsT9.prototype = {
 
       if (!found) {
         return false;
-      }
-
-      if (word.length === 0) {
-        finishedWord = true;
       }
     }
 

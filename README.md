@@ -33,20 +33,21 @@ Where:
   - An array of words, or
   - A string with the path of a JSON file with a field called 'words' containing the array of words (see the words.json example file).
 - `settings` (optional)
-  - `sort`: A `sort(A, B)` function that returns:  
+  - `sort`: A `sort(A, B)` (__Default__: Alphabetical order) function that returns:  
     - -1 if `A < B`
     - 1 if `A > B`
     - 0 if `A == B`
-  - `maxAmount`: Default max amount of predictions to be returned.
+  - `maxAmount`: Default max amount of predictions to be returned (__Default__: `Infinity`).
+  - `slackSearch`: Search words using [slack search](#how-slack-search-works) (__Default__: `true`).
 
 ## API
 
 - `predict(word)`: Return the predictions to the given word.
 - `addWord(word)`: Add an new word to the tree.
 
-## About `predict`
+## How slack search works
 
-If no complete word in the tree matches the searched word, `jsT9` will remove the last character of the word, one by one, until it find a match.
+If no complete word in the tree matches the searched word, the slack search will remove the last character of the word, one by one, until it finds a match.
 
 Example:
 
@@ -55,4 +56,6 @@ Given this word list:
   - Look
   - Loop
 
-If you predict `Loo`, you'll get `["Look", "Loop"]`. But if you predict `Lx`, you'll get `["List", "Look", "Loop"]`.
+If you try predict `Loo`, you'll get `["Look", "Loop"]`.
+
+But if you try predict `Lx`, the algorithm won't find a match, so it will remove the "x" and try to predict `L`, then you'll get `["List", "Look", "Loop"]`.

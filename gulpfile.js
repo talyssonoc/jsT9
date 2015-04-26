@@ -54,7 +54,7 @@ gulp.task('build', ['clean'], function() {
 });
 
 gulp.task('test', ['build'], function() {
-  return gulp.src('test/*_test.js')
+  return gulp.src('test/*Test.js')
     .pipe(mocha({
       globals: ['chai'],
       timeout: 6000,

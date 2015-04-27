@@ -1,4 +1,4 @@
-module.exports = [
+[
   "Lorem",
   "ipsum",
   "dolor",
@@ -68,4 +68,4 @@ module.exports = [
   "id",
   "est",
   "laborum"
-];
+]

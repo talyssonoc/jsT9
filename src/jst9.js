@@ -37,21 +37,40 @@ var jsT9 = function jsT9(_wordList, _config) {
     branches: []
   };
 
+  this._onReadyCallbacks = [];
+
   this._getWordList(_wordList, function fillTree(wordList) {
-    var word;
 
     // For each word in the list
-    for (var _word_ in wordList) {
-
-      word = wordList[_word_]; //Get the current word to be added to the three
-
-      this.addWord(word);
+    for (var word in wordList) {
+      this.addWord(wordList[word]);
     }
+
+    this._isReady = true;
+
+    setTimeout(function() {
+      for(var fn in this._onReadyCallbacks) {
+        this._onReadyCallbacks[fn].call(null);
+      }
+    }.bind(this), 0);
+
   }.bind(this));
 };
 
 jsT9.prototype = {
   constructor: jsT9,
+
+  /**
+   * Add a listener for when the tree is ready
+   * @param  {Function} fn Callback function
+   */
+  ready: function ready(fn) {
+    if(this._isReady) {
+      return fn.call(null);
+    }
+
+    return this._onReadyCallbacks.push(fn);
+  },
 
   /**
    * Predict the words, given the initial word
@@ -387,18 +406,14 @@ jsT9.prototype = {
         jsonData = JSON.parse(jsonData);
       }
 
-      if (Array.isArray(jsonData.words)) {
+      if(Array.isArray(jsonData.words)) {
         words = jsonData.words;
       }
 
       callback(words);
-
-    })
+    }.bind(this))
     .catch(function(error) {
-
-      console.error(error);
       callback(words);
-
-    });
+    }.bind(this));
   }
 };

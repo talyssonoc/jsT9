@@ -31,7 +31,7 @@ Where:
 
 - `words` can be:
   - An array of words, or
-  - A string with the path of a JSON file with a field called 'words' containing the array of words (see the words.json example file).
+  - A string with the path of a JSON file with a field called 'words' containing the array of words (see the words.json example file). See `ready` method on the API below.
 - `settings` (optional)
   - `sort`: A `sort(A, B)` (__Default__: Alphabetical order) function that returns:  
     - -1 if `A < B`
@@ -44,6 +44,7 @@ Where:
 
 - `predict(word)`: Return the predictions to the given word.
 - `addWord(word)`: Add an new word to the tree.
+- `ready(callback)`: Runs the callback when the tree is ready, useful when you're loading the words with JSON.
 
 ## How slack search works
 
